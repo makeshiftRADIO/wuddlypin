@@ -13,7 +13,7 @@ package entities.characters.dummies
 		[Embed(source = "../../../assets/images/DUMMY1.png")] public static var SHEET:Class;
 		public var d:int = 0;
 		public var r:Number = 0;
-		public const M:Number = 50000;
+		public const M:Number = 500000;
 		
 		
 		public function dummy_1(X:Number = 0, Y:Number = 0) 
