@@ -1,0 +1,178 @@
+package entities.characters.player 
+{
+	/**
+	 * ...
+	 * @author bottlecap
+	 */
+	 
+	 import org.flixel.*;
+	 import assets._nuke;
+	 
+	public class player_V3 extends FlxSprite
+	{
+		[Embed(source = "../../../assets/images/spritesheet_1.png")] public static var SHEET:Class;
+		
+		public static var RUN_SPEED:int = 70;
+		public var JUMP_SPEED:int = 230;
+		public var g:Number = 500;
+		public var anim:String = "";
+		public var jumpN:int = 0;
+		public var FALL:int = 0;
+		public var timer:Number = 0;
+		
+		//CONTROLS
+		public var JUMP_KEY:String = "W";
+		public var SUCK_KEY:String = "C";
+		
+		//STATES
+		public var LOCK:Boolean = false;
+		public var MOV:Boolean = false;
+		public var SUCKING:Boolean = false;
+		public var FULL:Boolean = false;
+		public var DEAD:Boolean = false;
+		public var ACTION_ID:int = 0;
+		public var LR:Boolean = false;
+		public var B:Boolean = false;
+		
+		public function player_V3(X:Number = 0, Y:Number = 0) 
+		{
+			super(X, Y);
+			loadGraphic(SHEET, true, true, 11, 18);
+			
+			addAnimation("idle", [0], 8, false);
+			addAnimation("run", [2, 3, 3, 4, 4, 5, 5, 6, 7, 7, 8, 8, 9, 9, 9], 20, true);
+			addAnimation("tranA", [1], 10, false);
+			addAnimation("tranB", [10, 11], 10, false);
+			addAnimation("jumpDOWN", [15, 16, 16, 16, 16, 16], 10, false);
+			addAnimation("DOWN", [16], 10, true);
+			addAnimation("jumpUP", [13, 14], 10, false);
+			addAnimation("jumpTR", [12], 10, true);
+			addAnimation("fallSTILL", [17,18], 10, false);
+			addAnimation("fallRUN", [17, 18, 19], 10, false);
+			
+			addAnimation("suckGROUND", [24, 25, 26, 27], 10, false);
+			addAnimation("suckingGROUND", [26, 27], 10, true);
+			addAnimation("suckingStopEmptyGROUND", [28, 12, 18], 10, false);
+			addAnimation("suckingStopFULLGROUND", [28, 36, 37], 10, false);
+			addAnimation("suckAIR", [29, 30, 31], 10, true);
+			addAnimation("suckingAIR", [30, 31], 10, true);
+			addAnimation("suckingStopEmptyAIR", [29, 14], 10, false);
+			addAnimation("suckingStopFullAIR", [38, 39], 10, false);
+			
+		}
+		
+		override public function update():void {
+			this.acceleration.y = g;
+			this.drag.x = RUN_SPEED * 5;
+			this.maxVelocity.x = RUN_SPEED
+			width = 7;
+			height = 9;
+			offset.x = 2;
+			offset.y = 9;
+			if (FlxG.keys.RIGHT)
+				facing = LEFT;
+			if (FlxG.keys.LEFT)
+				facing = RIGHT;
+			
+			if (!DEAD) {
+				if (FlxG.keys.LEFT || FlxG.keys.RIGHT)
+					LR = true;
+				else
+					LR = false;
+				if (!LOCK) {
+					if (LR) {
+						this.drag.x = 0;
+						movement(this.velocity.x, RUN_SPEED * 14, RUN_SPEED);
+					}
+					else this.acceleration.x = 0;
+					animate();
+				}
+				if (FlxG.keys.S)
+					this.velocity.x = 300;
+				
+			}
+			else if (DEAD) {
+				
+			}
+			super.update();
+		}
+		
+		private function animSUFIX(x:String):String {
+			var F:String = "";
+			if (FULL)
+				anim = anim + "_FULL";
+			F = anim;
+			return F;
+		}
+		
+		private function actions():void {
+			
+			//controls
+			//movement(LOCK);
+			
+			//actions
+			switch(ACTION_ID) {
+				case 0:
+					
+					break;
+				case 1:
+					
+					break;
+				default:
+					
+					break;
+			}
+			
+		}
+		
+		private function movement(VEL:Number = 0, ACC:Number = 0, MAX:int = 70):void {
+			/*if (facing == RIGHT) {
+				ACC *= -1;
+				VEL += ACC * FlxG.elapsed;
+				if (Math.abs(VEL) > RUN_SPEED)
+					VEL = -RUN_SPEED;
+			}
+			if (facing == LEFT) {
+				VEL += ACC * FlxG.elapsed;
+				if (Math.abs(VEL) > RUN_SPEED)
+					VEL = RUN_SPEED;
+			}
+			if (ACC / VEL < 0)
+				B = true;
+			else
+				B = false;
+			this.velocity.x = VEL;*/
+			//this.maxVelocity.x = RUN_SPEED;
+			if (facing == LEFT)
+				this.acceleration.x = RUN_SPEED * 10;
+			if (facing == RIGHT)
+				this.acceleration.x = RUN_SPEED * -10;
+		}
+		
+		private function animate():void {
+			if (LR) {
+				if (Math.abs(this.velocity.x) < RUN_SPEED)
+					anim = "tranA";
+					
+				if (Math.abs(this.velocity.x) >= RUN_SPEED)
+					anim = "run";
+					
+					
+				/*if (this.acceleration.x / this.velocity.x < 0)
+					anim = "tranB";*/
+				if (this.velocity.x == 0)
+					anim = "idle";
+				this.play(animSUFIX(anim));
+			}
+			if (!LR) {
+				if (Math.abs(this.velocity.x) < RUN_SPEED)
+					anim = "tranB";
+				if (this.velocity.x == 0)
+					anim = "idle";
+				this.play(animSUFIX(anim));
+			}
+		}
+		
+	}
+
+}
