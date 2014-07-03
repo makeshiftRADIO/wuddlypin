@@ -2,6 +2,8 @@ package entities.characters.player
 {
 	import org.flixel.*;
 	import assets._nuke;
+	import entities.particles.*;
+	import worlds.TestStage;
 	/**
 	 * ...
 	 * @author bottlecap
@@ -38,11 +40,17 @@ package entities.characters.player
 		public var UFF:int = 0;
 		public var fallTHR:Boolean = false;
 		public var _suckIND:Array = new Array(false, null);
+		public var FALL_V:Number = 0;
+		
 		
 		//TIMERS
 		public var timer:Number = 0;
 		public var jumpTimer:Number = 0;
 		public var fallTimer:Number = 0;
+		
+		//PARTICLES
+		public var dust_emtr:emitterUNI;
+		public var GROOP:FlxGroup = new FlxGroup();
 		
 		public function player_V4(X:Number = 0, Y:Number = 0) 
 		{
@@ -61,7 +69,7 @@ package entities.characters.player
 			addAnimation("fallRUN", [17, 19], 10, false);
 			addAnimation("break", [20], 10, false);
 			
-			addAnimation("suckGROUND", [24, 25/*, 26, 27*/], 10, false);
+			addAnimation("suckGROUND", [24, 25, 25], 20, false);
 			addAnimation("suckingGROUND", [26, 27], 10, true);
 			addAnimation("suckingStopEmptyGROUND", [28, 12, 18], 10, false);
 			addAnimation("suckingStopFULLGROUND", [28, 36, 37], 10, false);
@@ -70,9 +78,14 @@ package entities.characters.player
 			addAnimation("suckingStopEmptyAIR", [29, 14], 10, false);
 			addAnimation("suckingStopFullAIR", [38, 39], 10, false);
 			
+			dust_emtr = new emitterUNI(this.x, this.y, dust_particle, 100, 500, -30, 30, -50, -200, 0, 0);
+			TestStage.GROOP.add(dust_emtr);
 		}
 		
 		override public function update():void {
+			/* * INITIAL CONDITIONS * */
+			
+			dust_emtr.at(this);
 			this.acceleration.y = g;
 			this.drag.x = RUN_SPEED * 5;
 			this.maxVelocity.x = RUN_SPEED
@@ -84,7 +97,9 @@ package entities.characters.player
 				facing = LEFT;
 			if (FlxG.keys.LEFT)
 				facing = RIGHT;
-				
+			
+			/* * GAME LOOP * */
+			
 			if (!DEAD) {
 				if (FlxG.keys.LEFT || FlxG.keys.RIGHT)
 					LR = true;
@@ -107,11 +122,6 @@ package entities.characters.player
 						if (isTouching(FLOOR) && MOV)
 							anim_ACTION = "IDLE";
 					}
-					/*if (FlxG.keys.justPressed(JUMP_KEY) && isTouching(FLOOR))
-						jump();*/
-					/*if (jumpN != 0) {
-						jumping();
-					}*/
 					if (FlxG.keys.justPressed(SUCK_KEY)) {
 						SUCKING = true;
 						MOV = false;
@@ -143,30 +153,32 @@ package entities.characters.player
 									MOV = true;
 									LOCK = false;
 									timer = 0;
+									UFF = 0;
 									if (FlxG.keys.justPressed(JUMP_KEY))
 										jump();
 								}
 							}
 						}
-						_suckIND[0] = (FlxG.keys.pressed(SUCK_KEY) && anim_ACTION == "SUCKING");
-						_suckIND[1] = (facing == LEFT);
+						/*_suckIND[0] = FlxG.keys.pressed(SUCK_KEY);
+						if (facing == LEFT)
+							_suckIND[1] = true;
+						else
+							_suckIND[1] = false;*/
 						//trace(_suckIND[0], _suckIND[1]);
 					}
 					
 				}
 				if (this.velocity.y > 0) {
-					//trace("FALLING");
 					UFF = 0;
 					MOV = false;
 					if (!SUCKING)
 						anim_ACTION = "JUMP";
+					FALL_V = this.velocity.y;
 				}
 				if (justTouched(FLOOR)) {
-					//trace("TOUCHED FLOOR");
 					floorTOUCH();
 				}
 				if (FlxG.keys.justPressed(JUMP_KEY) && isTouching(FLOOR)) {
-					//trace("PRESSED JUMP");
 					if (!LOCK) {
 						if (!FlxG.keys.DOWN)
 							jump();
@@ -177,7 +189,7 @@ package entities.characters.player
 				if (jumpN != 0 && !LOCK) {
 					jumping();
 				}
-				if (UFF != 0) {
+				if (UFF != 0 && !SUCKING) {
 					_UFF(UFF)
 				}
 				if (fallTHR) {
@@ -194,9 +206,33 @@ package entities.characters.player
 			else if (DEAD) {
 				
 			}
-			//trace(anim, MOV);
 			animate();
 			super.update();
+		}
+		
+		private function dustEM_ST(explode:Boolean, life:int, Hz:Number, MODE:String = "DEFAULT"):void {
+			var QW:int = 0;
+			switch(MODE) {
+				case "JUMP": {
+					dust_emtr.setXSpeed( -30, 30);
+					dust_emtr.setYSpeed( -30, -200);
+					QW = 5;
+				}
+					break;
+				case "FALL": {
+					dust_emtr.setXSpeed( -50, 50);
+					dust_emtr.setYSpeed( -50, -150);
+					dust_emtr.y = this.y + 9;
+					QW = 7;
+				}
+					break;
+				case "DEFAULT": {
+					dust_emtr.setXSpeed( -50, 50);
+					dust_emtr.setYSpeed( -50, -500);
+					QW = 3;
+				}
+			}
+			dust_emtr.start(explode, life, Hz, QW);
 		}
 		
 		private function stop():void {
@@ -218,7 +254,6 @@ package entities.characters.player
 			else if (x == 2)
 				anim_ACTION = "UFFS";
 			if (timer >= 0.2 || JLR) {
-				//trace("DONE WITH UFF");
 				MOV = true;
 				timer = 0;
 				UFF = 0;
@@ -226,27 +261,28 @@ package entities.characters.player
 		}
 		
 		private function floorTOUCH():void {
-			//trace("YUP, TOUCHED FLOOR");
 			jumpN = 0;
 			jumpTimer = 0;
 			MOV = false;
-			//timer = 0;
 			if (!SUCKING) {
-				//trace("UFF");
 				timer = 0;
 				if (LR)
 					UFF = 1;
 				if (!LR)
 					UFF = 2;
 			}
+			if (FALL_V > 200) {
+				dustEM_ST(true, 5, 0.01, "FALL");
+				FALL_V = 0;
+			}
 		}
 		
 		private function jump():void {
-			//trace("JUMPED");
 			jumpN = 1;
 			MOV = false;
 			UFF = 0;
 			this.velocity.y = -JUMP_SPEED;
+			dustEM_ST(true, 5, 0.01, "JUMP");
 		}
 		
 		private function jumping():void {
@@ -261,12 +297,14 @@ package entities.characters.player
 		}
 		
 		private function _SUCKING():void {
-			if (timer < 0.2) {
+			if (timer < 0.15) {
 				timer += FlxG.elapsed;
 				anim_ACTION = "SUCK";
 			}
-			if (timer >= 0.2) {
+			if (timer >= 0.15) {
 				anim_ACTION = "SUCKING";
+				_suckIND[0] = SUCKING;
+				_suckIND[1] = facing == LEFT;
 			}
 		}
 		
@@ -290,20 +328,26 @@ package entities.characters.player
 				}
 					break;
 				case "RUN": {
-					//trace("ACTION = RUN");
 					if (Math.abs(this.velocity.x) < RUN_SPEED)
 						anim = "tranA";
-					if (Math.abs(this.velocity.x) == RUN_SPEED)
+					if (Math.abs(this.velocity.x) == RUN_SPEED) {
+						var t:int = 0;
+						if (facing == RIGHT)
+							t = 1;
+						else 
+							t = -1;
 						anim = "run";
+					}
 					if (this.velocity.x == 0)
 						anim = "idle";
-					if (this.velocity.x / this.acceleration.x < 0) 
+					if (this.velocity.x / this.acceleration.x < 0) {
+						
 						anim = "break";
+					}
 					this.play(anim_SUFIX(anim));
 				}
 					break;
 				case "JUMP": {
-					//trace("ACTION = JUMP");
 					if (this.velocity.y < 0)
 						if (anim != "jumpUP") {
 							anim = "jumpUP";
@@ -317,13 +361,11 @@ package entities.characters.player
 				}
 					break;
 				case "UFFR": {
-					//trace("UFFR", MOV);
 					anim = "fallRUN";
 					this.play(anim_SUFIX(anim));
 				}
 					break;
 				case "UFFS": {
-					//trace("UFFS", MOV);
 					anim = "fallSTILL";
 					this.play(anim_SUFIX(anim));
 				}
