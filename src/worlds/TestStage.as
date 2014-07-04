@@ -63,6 +63,9 @@ package worlds
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP4);
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP);
 			
+			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP);
+			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP4);
+			
 		}
 	}
 }
