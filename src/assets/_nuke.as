@@ -6,6 +6,7 @@ package assets
 	import org.flixel.*;
 	import entities.characters.player.player;
 	import entities.characters.dummies.dummy_1;
+	import worlds.TestStage;
 	/**
 	 * ...
 	 * @author makeshiftRADIO
@@ -28,12 +29,8 @@ package assets
 		public static var TILE_MAP5:FlxTilemap = new FlxTilemap();
 		
 		public static var allParticles:FlxGroup = new FlxGroup;
-		//public static var mainPlayer:player = new entities.characters.player.player(300, 100);
-		//public static var mainPlayer:player_V2 = new player_V2(300, 100);//player_V2(300,100);
-		//public static var mainPlayer:player_V3 = new player_V3(300, 100);
+		public static var dummy1:dummy_1 = new dummy_1(350, 100);
 		public static var mainPlayer:player_V4 = new player_V4(300, 100);
-		
-		public static var dummy1:dummy_1 = new dummy_1(400, 100);
 		
 	}
 

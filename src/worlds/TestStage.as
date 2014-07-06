@@ -1,7 +1,7 @@
 package worlds
 {
-	import entities.characters.dummies.dummy_1;
 	import entities.characters.player.cameraPoint;
+	import entities.characters.player.player_V4;
 	import org.flixel.*;
 	import entities.*;
 	import assets._nuke;
@@ -12,11 +12,10 @@ package worlds
 		public var sky:FlxSprite = new FlxSprite(335, 180, _nuke.SKY);
 		[Embed(source = "../assets/images/KEN008---Classic-Kenya---web.jpg")] static public var BG:Class;
 		public var BG_L:FlxSprite;
-		public var enemys:FlxGroup = new FlxGroup();
+		public static var GROOP:FlxGroup = new FlxGroup();
 		
 		override public function create():void
 		{
-			
 			_nuke.TILE_MAP.loadMap(new _nuke.MAP1, _nuke.TILE_SHEET, 10, 10);
 			_nuke.TILE_MAP2.loadMap(new _nuke.MAP2, _nuke.TILE_SHEET, 10, 10);
 			_nuke.TILE_MAP3.loadMap(new _nuke.MAP3, _nuke.TILE_SHEET, 10, 10);
@@ -35,12 +34,10 @@ package worlds
 			add(_nuke.TILE_MAP4);
 			add(_nuke.TILE_MAP3);
 			add(_nuke.allParticles);
-			add(_nuke.mainPlayer);
-			enemys.add(_nuke.dummy1);
-			for (var i:int = 1; i < 6; i++) {
-				enemys.add(new dummy_1(300 + i * 10, 100));
-			}
-			add(enemys);
+			add(_nuke.mainPlayer);// = new player_V4(300, 100));
+			//add(_nuke.GROOP);
+			add(GROOP);
+			add(_nuke.dummy1);
 			add(_nuke.TILE_MAP5);
 			add(camera);
 			
@@ -67,9 +64,8 @@ package worlds
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP4);
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP);
 			
-			FlxG.collide(enemys, _nuke.TILE_MAP);
-			FlxG.collide(enemys, _nuke.TILE_MAP4);
-			
+			/*FlxG.collide(GROOP, _nuke.TILE_MAP4);
+			FlxG.collide(GROOP, _nuke.TILE_MAP);*/
 		}
 	}
 }

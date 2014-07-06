@@ -1,6 +1,7 @@
 package entities.characters.dummies 
 {
 	import assets._nuke;
+	import entities.particles.*;
 	import org.flixel.*;
 	
 	/**
@@ -11,41 +12,33 @@ package entities.characters.dummies
 	public class dummy_1 extends FlxSprite
 	{
 		[Embed(source = "../../../assets/images/DUMMY1.png")] public static var SHEET:Class;
-		public var d:int = 0;
-		public var r:Number = 0;
-		public const M:Number = 500000;
-		
+		protected const M:int = 10000;
+		public var Rx:Number = 0;
+		public var Ry:Number = 0;
+		public var emtr:emitterUNI;
 		
 		public function dummy_1(X:Number = 0, Y:Number = 0) 
 		{
 			super(X, Y);
-			loadGraphic(SHEET, false, true, 9, 6);
-			addAnimation("p", [0], 10, false);
-			this.play("p");
-			this.maxVelocity.x = 300;
-			
+			loadGraphic(SHEET, true, true, 9, 6);
+			addAnimation("R", [0], 10, false);
+			this.play("R");
+			/*this.velocity.x = 50;
+			this.velocity.y = -50;*/
+			this.maxVelocity.x = 100;
+			this.maxVelocity.y = 100;
 		}
-		override public function update():void
-		{
-			this.drag.x = 1000;
-			d = (_nuke.mainPlayer.x - this.x) / Math.abs(_nuke.mainPlayer.x - this.x);
-			r = Math.abs(_nuke.mainPlayer.x - this.x);
-			this.acceleration.y = 500;
-			if (_nuke.mainPlayer._suckIND[0]) {
-				if (d > 0 && !_nuke.mainPlayer._suckIND[1]) 
-					this.acceleration.x = M / (r) * d;
-				else if (d < 0 && _nuke.mainPlayer._suckIND[1])
-					{
-					this.acceleration.x = M / (r) * d;
-					trace("troll");
-					}
-				else
-					this.acceleration.x = 0;
-				trace(this.acceleration.x);
-			}
-			else
-				this.acceleration.x = 0;
-			//trace(this.acceleration.x);
+		
+		override public function update():void {
+			Rx = _nuke.mainPlayer.x - this.x;
+			Ry = _nuke.mainPlayer.y - this.y;
+			
+			//this.acceleration.x = M / Rx;
+			//this.acceleration.y = M / Ry;
+			
+			trace("DUMMY", this.acceleration.x, this.acceleration.y);
+			
+			super.update();
 		}
 		
 	}
