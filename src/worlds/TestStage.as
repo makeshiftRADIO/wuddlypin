@@ -35,7 +35,6 @@ package worlds
 			add(_nuke.TILE_MAP3);
 			add(_nuke.allParticles);
 			add(_nuke.mainPlayer);// = new player_V4(300, 100));
-			//add(_nuke.GROOP);
 			add(GROOP);
 			add(_nuke.dummy1);
 			add(_nuke.TILE_MAP5);
@@ -64,8 +63,9 @@ package worlds
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP4);
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP);
 			
-			/*FlxG.collide(GROOP, _nuke.TILE_MAP4);
-			FlxG.collide(GROOP, _nuke.TILE_MAP);*/
+			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP);
+			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP4);
+			
 		}
 	}
 }

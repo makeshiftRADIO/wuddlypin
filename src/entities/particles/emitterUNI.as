@@ -25,8 +25,16 @@ package entities.particles
 				this.add(new particle);
 			 
 			//this.start(explode, lifeSP, fHz, quant);
+			exists = false;
+			
 		}
-				
+		
+		override public function update():void {
+			super.update();
+			//exists = on;
+			
+		}
+		
 	}
 
 }

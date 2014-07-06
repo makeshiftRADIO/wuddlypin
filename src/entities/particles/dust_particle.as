@@ -51,8 +51,12 @@ package entities.particles
 		
 		override public function update():void {
 			fade();
-			if (alpha <= 0 || !onScreen())
+			if (alpha <= 0 || !onScreen()) {
+				exists = false;
 				kill();
+			}
+			else
+				exists = true;
 				
 			super.update();
 		}
