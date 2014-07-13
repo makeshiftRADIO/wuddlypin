@@ -205,6 +205,7 @@ package entities.characters.player
 			else if (DEAD) {
 				
 			}
+			//trace(x, y);
 			animate();
 			super.update();
 		}

@@ -30,6 +30,8 @@ package assets
 		
 		public static var allParticles:FlxGroup = new FlxGroup;
 		public static var dummy1:dummy_1 = new dummy_1(91, 305);
+		public static var dummy2:dummy_1 = new dummy_1(300, 100);
+		public static var dummy3:dummy_1 = new dummy_1(57, 50);
 		public static var mainPlayer:player_V4 = new player_V4(300, 100);
 		
 	}

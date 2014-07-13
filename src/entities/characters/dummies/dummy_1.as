@@ -3,6 +3,7 @@ package entities.characters.dummies
 	import assets._nuke;
 	import entities.particles.*;
 	import org.flixel.*;
+	import worlds.TestStage;
 	
 	/**
 	 * ...
@@ -28,6 +29,7 @@ package entities.characters.dummies
 		protected var LOCK:Boolean = false;
 		protected var WALK_MnMx:Array = new Array(3, 30);
 		protected var WAIT_MnMx:Array = new Array(0.5, 5);
+		protected var onPLATFORM:Boolean = true;
 		
 		/** TIMER VARs **/
 		protected var waiting:Number = 0;
@@ -39,6 +41,7 @@ package entities.characters.dummies
 			loadGraphic(SHEET, true, true, 9, 8);
 			addAnimation("idle", [0], 1, true);
 			addAnimation("walk", [1, 0], 10, true);
+			_facing_sing = (facing == LEFT ? -1 : 1);
 		}
 		
 		override public function update():void {
@@ -66,11 +69,21 @@ package entities.characters.dummies
 						}
 						anim_STATE = "IDLE";
 					} else if (GONNA_GO) {
-						
+						/** TURNAROUND **/
 						if (justTouched(LEFT)) {
 							setFacing(RIGHT, current_V);
 						} else if (justTouched(RIGHT)) {
 							setFacing(LEFT, current_V);
+						} else if (onPLATFORM) {
+							if (facing == LEFT) {
+								if (!(overlapsAt(this.x - width, this.y + height + 1, _nuke.TILE_MAP) || overlapsAt(this.x - width, this.y + height + 1, _nuke.TILE_MAP4))) {
+									setFacing(RIGHT, current_V);
+								}
+							} else if (facing == RIGHT) {
+								if (!(overlapsAt(this.x + width , this.y + height + 1, _nuke.TILE_MAP) || overlapsAt(this.x + width, this.y + height + 1, _nuke.TILE_MAP4))) {
+									setFacing(LEFT, current_V);
+								}
+							}
 						}
 						
 						if (ACC_SET) {
@@ -104,6 +117,7 @@ package entities.characters.dummies
 			_facing_sing = (facing == LEFT ? -1 : 1);
 			this.acceleration.x = WALK_SPEED * _facing_sing * 3;
 			this.velocity.x = speed * -1;
+			trace("BOOM");
 		}
 		
 		private function animate(STATE:String):void {

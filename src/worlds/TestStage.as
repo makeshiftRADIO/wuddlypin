@@ -37,6 +37,8 @@ package worlds
 			add(_nuke.mainPlayer);// = new player_V4(300, 100));
 			add(GROOP);
 			add(_nuke.dummy1);
+			add(_nuke.dummy2);
+			add(_nuke.dummy3);
 			add(_nuke.TILE_MAP5);
 			add(camera);
 			
@@ -65,6 +67,10 @@ package worlds
 			
 			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP);
 			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP4);
+			FlxG.collide(_nuke.dummy2, _nuke.TILE_MAP);
+			FlxG.collide(_nuke.dummy2, _nuke.TILE_MAP4);
+			FlxG.collide(_nuke.dummy3, _nuke.TILE_MAP);
+			FlxG.collide(_nuke.dummy3, _nuke.TILE_MAP4);
 			
 		}
 	}
