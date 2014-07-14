@@ -17,6 +17,7 @@ package entities.characters.dummies
 		public var g:Number = 500;
 		public var WALK_SPEED:int = 40;
 		public var anim:String = "";
+		protected var damageToPlayer:int = 1;
 		
 		/** STATE VARs **/
 		public var anim_STATE:String = "";
@@ -32,6 +33,9 @@ package entities.characters.dummies
 		protected var onPLATFORM:Boolean = true;
 		protected var SUCKED:Boolean = false;
 		protected var _POS:int = 0;
+		protected var inRANGE:Boolean = false;
+		protected var YR:Number = 0;
+		protected var XR:Boolean = false;
 		
 		/** TIMER VARs **/
 		protected var waiting:Number = 0;
@@ -50,6 +54,12 @@ package entities.characters.dummies
 		
 		override public function update():void {
 			/** INITIAL SETTINGS **/
+			YR = Math.abs((this.y + height / 2) - (_nuke.mainPlayer.y + _nuke.mainPlayer.height / 2));
+			XR = this.onScreen() && _nuke.mainPlayer.onScreen();
+			if (YR <= 10 && XR)
+				inRANGE = true;
+			else
+				inRANGE = false;
 			this.acceleration.y = g;
 			this.maxVelocity.x = WALK_SPEED;
 			this.drag.x = WALK_SPEED * 3;
@@ -60,13 +70,25 @@ package entities.characters.dummies
 			/** LOOP **/	
 			if (!DEAD) {
 				if (_nuke.mainPlayer._suckIND[0]) {
-					if (_nuke.mainPlayer._suckIND[1] && _POS < 0) {
-						LOCK = true;
-						SUCKED = true;
-					}
-					if (!_nuke.mainPlayer._suckIND[1] && _POS > 0){
-						LOCK = true;
-						SUCKED = true;
+					if (inRANGE){
+						if (_nuke.mainPlayer._suckIND[1]) {// && _POS < 0) {
+							if (_POS < 0){
+								LOCK = true;
+								SUCKED = true;
+							} else {
+								LOCK = false;
+								SUCKED = false;
+							}
+						}
+						if (!_nuke.mainPlayer._suckIND[1]) {// && _POS > 0) {
+							if (_POS > 0 ){
+								LOCK = true;
+								SUCKED = true;
+							} else {
+								LOCK = false;
+								SUCKED = false;
+							}
+						}
 					}
 				} else {
 					LOCK = false;
@@ -88,7 +110,7 @@ package entities.characters.dummies
 						}
 						anim_STATE = "IDLE";
 					} else if (GONNA_GO) {
-						/** TURNAROUND **/
+						
 						if (justTouched(LEFT)) {
 							setFacing(RIGHT, current_V);
 						} else if (justTouched(RIGHT)) {
@@ -120,12 +142,15 @@ package entities.characters.dummies
 						anim_STATE = "WALK";
 					}
 					
+					if (overlaps(_nuke.mainPlayer) && !_nuke.mainPlayer.IMUNE && !_nuke.mainPlayer.DEAD) {
+						_nuke.mainPlayer.damagePlayer(damageToPlayer);
+					}
 				}
 			else {
 				if (SUCKED) {
 					this.acceleration.x = _POS * 500;
 					this.maxVelocity.x = 1000;
-					if (overlapsAt(this.x + width / 2, this.y + height / 2, _nuke.mainPlayer))
+					if (overlaps(_nuke.mainPlayer))//if (overlapsAt(this.x + width / 2, this.y + height / 2, _nuke.mainPlayer))
 						_FILL();
 					anim_STATE = "IDLE";
 				}
@@ -144,7 +169,6 @@ package entities.characters.dummies
 			_facing_sing = (facing == LEFT ? -1 : 1);
 			this.acceleration.x = WALK_SPEED * _facing_sing * 3;
 			this.velocity.x = speed * -1;
-			trace("BOOM");
 		}
 		
 		private function animate(STATE:String):void {

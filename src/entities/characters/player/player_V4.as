@@ -46,6 +46,7 @@ package entities.characters.player
 		public var SPIT_thrust:Boolean = false;
 		public var CHEW:Boolean = false;
 		public var CHEW_splat:int = 0;
+		public var IMUNE:Boolean = false;
 		
 		
 		//TIMERS
@@ -60,6 +61,9 @@ package entities.characters.player
 		//SENSOR
 		public var sensors_on:Boolean = false;
 		public var floor_sensor_var:floor_sensor = new floor_sensor;
+		//CURRENT STAGE
+		public var _CURRENT_STAGE:Class = TestStage;
+
 		
 		public function player_V4(X:Number = 0, Y:Number = 0) 
 		{
@@ -101,6 +105,8 @@ package entities.characters.player
 			
 			TestStage.GROOP.add(dust_emtr);
 			TestStage.GROOP.add(chunk_emtr);
+			
+			//gui.updateGUI("HEALTH");
 		}
 		
 		override public function update():void {
@@ -113,9 +119,35 @@ package entities.characters.player
 			update_sensors();
 			
 			/* * INITIAL CONDITIONS * */
-			if (FlxG.keys.justPressed("U")){
+			IMUNE = flickering ? true : false;
+			if (FlxG.keys.justPressed("U")) {
+				trace("C");
 				FULL = true;
 			}
+			if (FlxG.keys.justPressed("W")) {
+				gui.updateGUI("HEALTH");
+			}
+			if (FlxG.keys.justPressed("E")){
+				if (FlxG.keys.SHIFT) {
+					_nuke._PLAYER_MAX_HEALTH--;
+					if (_nuke._PLAYER_MAX_HEALTH * 10 < _nuke._PLAYER_HEALTH) {
+						_nuke._PLAYER_HEALTH = _nuke._PLAYER_MAX_HEALTH * 10;//_MAX_HEALTH * 10;;
+					}
+				}
+				else {
+					_nuke._PLAYER_MAX_HEALTH++;
+					_nuke._PLAYER_HEALTH = _nuke._PLAYER_MAX_HEALTH * 10;
+				}
+				//_nuke._PLAYER_HEALTH = _MAX_HEALTH * 10;
+				gui.updateGUI("HEALTH");
+			}
+			if (FlxG.keys.justPressed("Q") && !IMUNE) {
+				if (FlxG.keys.SHIFT)
+					healPlayer(1);
+				else
+					damagePlayer(1);
+			}
+			
 			dust_emtr.at(this);
 			chunk_emtr.at(this);
 			this.acceleration.y = g;
@@ -244,6 +276,7 @@ package entities.characters.player
 							MOV = true;
 							LOCK = false;
 							FULL = false;
+							healPlayer(2);
 							timer = 0;
 						}
 						if (_curIndex == 75) {
@@ -283,7 +316,6 @@ package entities.characters.player
 				if (UFF != 0 && !LOCK) {
 					_UFF(UFF)
 				}
-				
 				if (fallTHR) {
 					
 					if (floor_sensor_var.overlaps(_nuke.TILE_MAP4) && !LR )
@@ -294,20 +326,33 @@ package entities.characters.player
 					if (fallTimer >= 0.1281) {
 						_nuke.mainPlayer.solid = true;
 						fallTimer = 0;
+						_nuke.TILE_MAP4 .setTileProperties(12, FlxObject.UP, null, null, 63);
 						fallTHR = false;
 					}
-					
 				}
 				
 			}
 			else if (DEAD) {
 				
 			}
-			//trace(x, y);
 			animate();
 			_suckIND[0] = anim_ACTION == "SUCKING";
 			//trace(_suckIND[0]);
 			super.update();
+		}
+		
+		public function damagePlayer(damage:int):void {
+			_nuke._PLAYER_HEALTH -= damage * 5;
+			if (_nuke._PLAYER_HEALTH < 0)
+				_nuke._PLAYER_HEALTH = 0;
+			this.flicker(1);
+			gui.updateHealth(_nuke._PLAYER_HEALTH, _nuke._PLAYER_MAX_HEALTH);
+		}
+		public function healPlayer(amount:int):void {
+			_nuke._PLAYER_HEALTH += amount * 5;
+			if (_nuke._PLAYER_HEALTH > _nuke._PLAYER_MAX_HEALTH * 10)
+				_nuke._PLAYER_HEALTH = _nuke._PLAYER_MAX_HEALTH * 10;
+			gui.updateHealth(_nuke._PLAYER_HEALTH, _nuke._PLAYER_MAX_HEALTH);
 		}
 		
 		private function emitterMNG(EMTR:FlxEmitter, explode:Boolean, life:int, Hz:Number, MODE:String = "DEFAULT"):void {
@@ -384,6 +429,8 @@ package entities.characters.player
 			}
 			if (FALL_V > 200) {
 				emitterMNG(dust_emtr, true, 5, 0.01, "FALL");
+				if (FALL_V >= 350)
+					damagePlayer(2);
 				FALL_V = 0;
 			}
 		}
