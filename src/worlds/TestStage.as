@@ -5,6 +5,7 @@ package worlds
 	import org.flixel.*;
 	import entities.*;
 	import assets._nuke;
+	import entities.characters.player.gui;
  
 	public class TestStage extends FlxState
 	{
@@ -23,6 +24,7 @@ package worlds
 			_nuke.TILE_MAP4 .setTileProperties(12, FlxObject.UP, null, null, 63);
 			_nuke.TILE_MAP5.loadMap(new _nuke.MAP5, _nuke.TILE_SHEET, 10, 10);
 			sky.scrollFactor.x = sky.scrollFactor.y = 0;
+			gui.updateGUI("HEALTH");
 			
 			
 			add(sky);
@@ -40,8 +42,12 @@ package worlds
 			add(_nuke.dummy2);
 			add(_nuke.dummy3);
 			add(_nuke.TILE_MAP5);
+			add(gui.healthBAR_GR);
+			//add(_nuke.healthUNIT);
 			add(camera);
 			
+			//_nuke.healthUNIT.scrollFactor.x = 0;
+			//_nuke.healthUNIT.scrollFactor.y = 0;
 			FlxG.camera.setBounds(-335, -180, 1030+320, 530+180);
 			
 			
