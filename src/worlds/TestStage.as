@@ -2,6 +2,7 @@ package worlds
 {
 	import entities.characters.player.cameraPoint;
 	import entities.characters.player.player_V4;
+	import entities.characters.player.spit_chunk;
 	import org.flixel.*;
 	import entities.*;
 	import assets._nuke;
@@ -21,8 +22,11 @@ package worlds
 			_nuke.TILE_MAP3.loadMap(new _nuke.MAP3, _nuke.TILE_SHEET, 10, 10);
 			_nuke.TILE_MAP4.loadMap(new _nuke.MAP4, _nuke.TILE_SHEET, 10, 10);
 			_nuke.TILE_MAP4 .setTileProperties(12, FlxObject.UP, null, null, 63);
+			_nuke.TILE_MAP .setTileProperties(12, FlxObject.ANY, null, null, 63);
 			_nuke.TILE_MAP5.loadMap(new _nuke.MAP5, _nuke.TILE_SHEET, 10, 10);
 			sky.scrollFactor.x = sky.scrollFactor.y = 0;
+			
+			_nuke.colideParticles.add(new spit_chunk(_nuke.mainPlayer.x, _nuke.mainPlayer.y, _nuke.mainPlayer.facing));
 			
 			
 			add(sky);
@@ -34,21 +38,25 @@ package worlds
 			add(_nuke.TILE_MAP4);
 			add(_nuke.TILE_MAP3);
 			add(_nuke.allParticles);
+			add(_nuke.colideParticles);
 			add(_nuke.mainPlayer);// = new player_V4(300, 100));
 			add(GROOP);
-			add(_nuke.dummy1);
+			/*add(_nuke.dummy1);
 			add(_nuke.dummy2);
-			add(_nuke.dummy3);
+			add(_nuke.dummy3);*/
 			add(_nuke.TILE_MAP5);
 			add(camera);
 			
-			FlxG.camera.setBounds(-335, -180, 1030+320, 530+180);
+			FlxG.camera.setBounds( -335, -180, 1030 + 320, 530 + 180);
 			
 			
 			
 		}
 		override public function update():void
 		{
+			
+			if (FlxG.keys.justPressed("L") )
+				_nuke.colideParticles.add(new spit_chunk(_nuke.mainPlayer.x, _nuke.mainPlayer.y, _nuke.mainPlayer.facing));
 			
 			super.update();
 			//FlxG.timeScale = 0.2;
@@ -59,11 +67,16 @@ package worlds
 					FlxG.timeScale = 1;
 			}
 			//FlxG.log("x:"+camera.x+" y:"+camera.y);
+		
 			
 			//FlxG.collide(_nuke.allParticles, TILE_MAP);
 			//FlxG.collide(_nuke.allParticles, TILE_MAP4);
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP4);
 			FlxG.collide(_nuke.mainPlayer, _nuke.TILE_MAP);
+			
+			FlxG.collide(_nuke.colideParticles, _nuke.TILE_MAP4);
+			
+			FlxG.collide(_nuke.colideParticles, _nuke.TILE_MAP);
 			
 			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP);
 			FlxG.collide(_nuke.dummy1, _nuke.TILE_MAP4);

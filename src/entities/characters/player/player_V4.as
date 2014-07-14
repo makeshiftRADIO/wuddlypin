@@ -57,6 +57,10 @@ package entities.characters.player
 		public var dust_emtr:emitterUNI;
 		public var chunk_emtr:emitterUNI;
 		
+		//SENSOR
+		public var sensors_on:Boolean = false;
+		public var floor_sensor_var:floor_sensor = new floor_sensor;
+		
 		public function player_V4(X:Number = 0, Y:Number = 0) 
 		{
 			super(X, Y);
@@ -93,11 +97,21 @@ package entities.characters.player
 			
 			dust_emtr = new emitterUNI(this.x, this.y, dust_particle, 100, 500);// , -30, 30, -50, -200, 0, 0);
 			chunk_emtr = new emitterUNI(this.x, this.y, dummyChunk_particles, 100, 500);
+			
+			
 			TestStage.GROOP.add(dust_emtr);
 			TestStage.GROOP.add(chunk_emtr);
 		}
 		
 		override public function update():void {
+					
+			if(!sensors_on){
+				FlxG.state.add(floor_sensor_var);
+				sensors_on = true;
+			}
+			
+			update_sensors();
+			
 			/* * INITIAL CONDITIONS * */
 			if (FlxG.keys.justPressed("U")){
 				FULL = true;
@@ -147,6 +161,7 @@ package entities.characters.player
 						timer = 0;
 					} else if (FlxG.keys.justPressed(SUCK_KEY) && FULL) {
 						SPIT = true;
+						_nuke.colideParticles.add(new spit_chunk(this.x, this.y, this.facing));
 						SPIT_thrust = true;
 						MOV = false;
 						LOCK = true;
@@ -271,10 +286,12 @@ package entities.characters.player
 				
 				if (fallTHR) {
 					
-					_nuke.mainPlayer.solid = false;
+					if (floor_sensor_var.overlaps(_nuke.TILE_MAP4) && !LR )
+						_nuke.mainPlayer.solid = false;
+						
 					
 					fallTimer += FlxG.elapsed;
-					if (fallTimer >= 0.25) {
+					if (fallTimer >= 0.1281) {
 						_nuke.mainPlayer.solid = true;
 						fallTimer = 0;
 						fallTHR = false;
@@ -289,7 +306,7 @@ package entities.characters.player
 			//trace(x, y);
 			animate();
 			_suckIND[0] = anim_ACTION == "SUCKING";
-			trace(_suckIND[0]);
+			//trace(_suckIND[0]);
 			super.update();
 		}
 		
@@ -490,6 +507,11 @@ package entities.characters.player
 				}
 					break;
 			}
+		}
+		private function update_sensors():void {
+				
+			floor_sensor_var.x = this.x;
+		
 		}
 		
 	}
