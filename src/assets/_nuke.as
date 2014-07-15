@@ -16,6 +16,9 @@ package assets
 	public class _nuke 
 	{
 		
+		[Embed(source = "sounds/spit.mp3")] static public var spit1:Class;
+		[Embed(source="sounds/hit1.mp3")] static public var hit1:Class;
+		
 		[Embed(source = "../data/mapCSV_lvl1_Solid.csv", mimeType = "application/octet-stream")] static public var MAP1:Class;
 		[Embed(source = "../data/mapCSV_lvl1_Over.csv", mimeType = "application/octet-stream")] static public var MAP5:Class;
 		[Embed(source = "../data/mapCSV_lvl1_Grass.csv", mimeType = "application/octet-stream")] static public var MAP3:Class;

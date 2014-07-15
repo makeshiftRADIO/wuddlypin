@@ -13,6 +13,7 @@ package entities.characters.player
 	public class player_V4 extends FlxSprite 
 	{
 		[Embed(source = "../../../assets/images/Spritesheet_3.png")] public static var SHEET:Class;
+		[Embed(source="../../../assets/sounds/spit.mp3")] private var spit1:Class;
 		
 		public var g:Number = 500;
 		public var RUN_SPEED:int = 70;
@@ -194,6 +195,7 @@ package entities.characters.player
 					} else if (FlxG.keys.justPressed(SUCK_KEY) && FULL) {
 						SPIT = true;
 						_nuke.colideParticles.add(new spit_chunk(this.x, this.y, this.facing));
+						FlxG.play(_nuke.spit1);
 						SPIT_thrust = true;
 						MOV = false;
 						LOCK = true;
@@ -429,8 +431,10 @@ package entities.characters.player
 			}
 			if (FALL_V > 200) {
 				emitterMNG(dust_emtr, true, 5, 0.01, "FALL");
-				if (FALL_V >= 350)
+				if (FALL_V >= 350){
 					damagePlayer(2);
+					FlxG.play(_nuke.hit1);
+					}
 				FALL_V = 0;
 			}
 		}
