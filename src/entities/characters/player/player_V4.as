@@ -12,7 +12,7 @@ package entities.characters.player
 	 
 	public class player_V4 extends FlxSprite 
 	{
-		[Embed(source = "../../../assets/images/Spritesheet_3.png")] public static var SHEET:Class;
+		[Embed(source = "../../../assets/images/Spritesheet_4.png")] public static var SHEET:Class;
 		
 		public var g:Number = 500;
 		public var RUN_SPEED:int = 70;
@@ -99,6 +99,8 @@ package entities.characters.player
 			addAnimation("fallRUN_FULL", [36, 64], 10, false);
 			addAnimation("break_FULL", [83], 10, false);
 			
+			addAnimation("death", [24, 84, 84, 85, 85, 86, 86, 87, 88, 88, 89, 90, 90, 91, 90, 91, 90, 91, 92, 93, 93], 10, false);
+			
 			dust_emtr = new emitterUNI(this.x, this.y, dust_particle, 100, 500);// , -30, 30, -50, -200, 0, 0);
 			chunk_emtr = new emitterUNI(this.x, this.y, dummyChunk_particles, 100, 500);
 			
@@ -147,7 +149,6 @@ package entities.characters.player
 				else
 					damagePlayer(1);
 			}
-			
 			dust_emtr.at(this);
 			chunk_emtr.at(this);
 			this.acceleration.y = g;
@@ -157,14 +158,14 @@ package entities.characters.player
 			height = 9;
 			offset.x = 2;
 			offset.y = 9;
-			if (FlxG.keys.RIGHT)
-				facing = LEFT;
-			if (FlxG.keys.LEFT)
-				facing = RIGHT;
 			
 			/* * GAME LOOP * */
 			
 			if (!DEAD) {
+				if (FlxG.keys.RIGHT)
+					facing = LEFT;
+				if (FlxG.keys.LEFT)
+					facing = RIGHT;
 				if (FlxG.keys.LEFT || FlxG.keys.RIGHT)
 					LR = true;
 				else
@@ -330,10 +331,19 @@ package entities.characters.player
 						fallTHR = false;
 					}
 				}
+				if (_nuke._PLAYER_HEALTH <= 0) {
+					DEAD = true;
+				}
 				
 			}
 			else if (DEAD) {
-				
+				stop();
+				anim_ACTION = "DEATH";
+				if (FlxG.keys.justPressed("R")) {
+					DEAD = false;
+					_nuke._PLAYER_HEALTH = _nuke._PLAYER_MAX_HEALTH * 10;
+					gui.updateHealth(_nuke._PLAYER_HEALTH, _nuke._PLAYER_MAX_HEALTH);
+				}
 			}
 			animate();
 			_suckIND[0] = anim_ACTION == "SUCKING";
@@ -471,6 +481,8 @@ package entities.characters.player
 			F = x;
 			if (FULL)
 				F = F + "_FULL";
+			if (DEAD)
+				F = x;
 			return F;
 		}
 		
@@ -553,8 +565,16 @@ package entities.characters.player
 					this.play(anim_SUFIX(anim));
 				}
 					break;
+				case "DEATH": {
+					if (anim != "death") {
+						anim = "death";
+						this.play(anim_SUFIX(anim));
+					}
+				}
+					break;
 			}
 		}
+		
 		private function update_sensors():void {
 				
 			floor_sensor_var.x = this.x;
