@@ -47,6 +47,7 @@ package entities.characters.player
 		public var CHEW:Boolean = false;
 		public var CHEW_splat:int = 0;
 		public var IMUNE:Boolean = false;
+		public var _TO_HEAL:int = 0;
 		
 		
 		//TIMERS
@@ -277,7 +278,7 @@ package entities.characters.player
 							MOV = true;
 							LOCK = false;
 							FULL = false;
-							healPlayer(2);
+							healPlayer(_TO_HEAL);
 							timer = 0;
 						}
 						if (_curIndex == 75) {

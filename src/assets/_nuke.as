@@ -1,5 +1,6 @@
 package assets 
 {
+	import entities.characters.dummies.dummy_RED_1;
 	import entities.characters.player.gui;
 	import entities.characters.player.HealthUnit;
 	import entities.characters.player.player_V2;
@@ -35,6 +36,10 @@ package assets
 		public static var dummy1:dummy_1 = new dummy_1(91, 305);
 		public static var dummy2:dummy_1 = new dummy_1(300, 100);
 		public static var dummy3:dummy_1 = new dummy_1(57, 50);
+		
+		public static var dummyRED1:dummy_RED_1 = new dummy_RED_1(91, 305);
+		public static var dummyRED2:dummy_RED_1 = new dummy_RED_1(470, 110);
+		public static var dummyRED3:dummy_RED_1 = new dummy_RED_1(57, 50);
 		
 		public static var _PLAYER_MAX_HEALTH:int = 3;
 		public static var _PLAYER_HEALTH:int = _PLAYER_MAX_HEALTH * 10;//mainPlayer._MAX_HEALTH * 10;

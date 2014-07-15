@@ -44,6 +44,9 @@ package worlds
 			add(_nuke.dummy1);
 			add(_nuke.dummy2);
 			add(_nuke.dummy3);
+			add(_nuke.dummyRED1);
+			add(_nuke.dummyRED2);
+			add(_nuke.dummyRED3);
 			add(_nuke.TILE_MAP5);
 			add(gui.healthBAR_GR);
 			//add(_nuke.healthUNIT);
@@ -88,7 +91,12 @@ package worlds
 			FlxG.collide(_nuke.dummy2, _nuke.TILE_MAP4);
 			FlxG.collide(_nuke.dummy3, _nuke.TILE_MAP);
 			FlxG.collide(_nuke.dummy3, _nuke.TILE_MAP4);
-			
+			FlxG.collide(_nuke.dummyRED1, _nuke.TILE_MAP);
+			FlxG.collide(_nuke.dummyRED1, _nuke.TILE_MAP4);
+			FlxG.collide(_nuke.dummyRED2, _nuke.TILE_MAP);
+			FlxG.collide(_nuke.dummyRED2, _nuke.TILE_MAP4);
+			FlxG.collide(_nuke.dummyRED3, _nuke.TILE_MAP);
+			FlxG.collide(_nuke.dummyRED3, _nuke.TILE_MAP4);
 		}
 	}
 }
