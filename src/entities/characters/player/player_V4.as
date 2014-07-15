@@ -12,8 +12,8 @@ package entities.characters.player
 	 
 	public class player_V4 extends FlxSprite 
 	{
-		[Embed(source = "../../../assets/images/Spritesheet_3.png")] public static var SHEET:Class;
-		[Embed(source="../../../assets/sounds/spit.mp3")] private var spit1:Class;
+
+		[Embed(source = "../../../assets/images/Spritesheet_4.png")] public static var SHEET:Class;
 		
 		public var g:Number = 500;
 		public var RUN_SPEED:int = 70;
@@ -62,8 +62,12 @@ package entities.characters.player
 		//SENSOR
 		public var sensors_on:Boolean = false;
 		public var floor_sensor_var:floor_sensor = new floor_sensor;
+		
 		//CURRENT STAGE
 		public var _CURRENT_STAGE:Class = TestStage;
+		
+		//SOUNDS
+		public var temp_prev_frame:int = 0;
 
 		
 		public function player_V4(X:Number = 0, Y:Number = 0) 
@@ -99,6 +103,8 @@ package entities.characters.player
 			addAnimation("fallSTILL_FULL", [36, 37], 10, false);
 			addAnimation("fallRUN_FULL", [36, 64], 10, false);
 			addAnimation("break_FULL", [83], 10, false);
+			
+			addAnimation("death", [24, 84, 84, 85, 85, 86, 86, 87, 88, 88, 89, 90, 90, 91, 90, 91, 90, 91, 92, 93, 93], 10, false);
 			
 			dust_emtr = new emitterUNI(this.x, this.y, dust_particle, 100, 500);// , -30, 30, -50, -200, 0, 0);
 			chunk_emtr = new emitterUNI(this.x, this.y, dummyChunk_particles, 100, 500);
@@ -148,7 +154,6 @@ package entities.characters.player
 				else
 					damagePlayer(1);
 			}
-			
 			dust_emtr.at(this);
 			chunk_emtr.at(this);
 			this.acceleration.y = g;
@@ -158,14 +163,14 @@ package entities.characters.player
 			height = 9;
 			offset.x = 2;
 			offset.y = 9;
-			if (FlxG.keys.RIGHT)
-				facing = LEFT;
-			if (FlxG.keys.LEFT)
-				facing = RIGHT;
 			
 			/* * GAME LOOP * */
 			
 			if (!DEAD) {
+				if (FlxG.keys.RIGHT)
+					facing = LEFT;
+				if (FlxG.keys.LEFT)
+					facing = RIGHT;
 				if (FlxG.keys.LEFT || FlxG.keys.RIGHT)
 					LR = true;
 				else
@@ -303,6 +308,7 @@ package entities.characters.player
 				}
 				if (justTouched(FLOOR)) {
 					floorTOUCH();
+					FlxG.play(_nuke.fall);
 				}
 				if (FlxG.keys.justPressed(JUMP_KEY) && isTouching(FLOOR)) {
 					if (!LOCK) {
@@ -332,18 +338,32 @@ package entities.characters.player
 						fallTHR = false;
 					}
 				}
+				if (_nuke._PLAYER_HEALTH <= 0) {
+					DEAD = true;
+					FlxG.play(_nuke.dead);
+				}
 				
 			}
 			else if (DEAD) {
-				
+				stop();
+				anim_ACTION = "DEATH";
+				if (FlxG.keys.justPressed("R")) {
+					DEAD = false;
+					_nuke._PLAYER_HEALTH = _nuke._PLAYER_MAX_HEALTH * 10;
+					gui.updateHealth(_nuke._PLAYER_HEALTH, _nuke._PLAYER_MAX_HEALTH);
+				}
 			}
 			animate();
+			sounds();
 			_suckIND[0] = anim_ACTION == "SUCKING";
 			//trace(_suckIND[0]);
 			super.update();
 		}
 		
 		public function damagePlayer(damage:int):void {
+			FlxG.play(_nuke.damage);
+			FlxG.play(_nuke.fall);
+			
 			_nuke._PLAYER_HEALTH -= damage * 5;
 			if (_nuke._PLAYER_HEALTH < 0)
 				_nuke._PLAYER_HEALTH = 0;
@@ -440,6 +460,8 @@ package entities.characters.player
 		}
 		
 		private function jump():void {
+			if (jumpN != 1)
+				FlxG.play(_nuke.jump);
 			jumpN = 1;
 			MOV = false;
 			UFF = 0;
@@ -475,6 +497,8 @@ package entities.characters.player
 			F = x;
 			if (FULL)
 				F = F + "_FULL";
+			if (DEAD)
+				F = x;
 			return F;
 		}
 		
@@ -557,8 +581,43 @@ package entities.characters.player
 					this.play(anim_SUFIX(anim));
 				}
 					break;
+				case "DEATH": {
+					if (anim != "death") {
+						anim = "death";
+						this.play(anim_SUFIX(anim));
+					}
+				}
+					break;
 			}
 		}
+		
+		private function sounds():void {
+			
+			switch (anim_ACTION) {
+				case "RUN": {
+					
+					if(_curFrame != temp_prev_frame){
+					
+						if (this._curFrame == 0 && _curIndex == 1 )
+							FlxG.play(_nuke.fs);
+							
+						if (this._curFrame == 4)
+							FlxG.play(_nuke.fs);
+						
+						//if (this._curFrame == 8)
+							//FlxG.play(_nuke.fs);
+							
+						if (this._curFrame == 12)
+							FlxG.play(_nuke.fs);
+							
+					}
+					
+				}
+			}
+
+			temp_prev_frame = _curFrame;
+		}
+		
 		private function update_sensors():void {
 				
 			floor_sensor_var.x = this.x;

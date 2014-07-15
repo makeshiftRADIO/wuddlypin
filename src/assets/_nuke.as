@@ -17,7 +17,12 @@ package assets
 	{
 		
 		[Embed(source = "sounds/spit.mp3")] static public var spit1:Class;
-		[Embed(source="sounds/hit1.mp3")] static public var hit1:Class;
+		[Embed(source = "sounds/hit1.mp3")] static public var hit1:Class;
+		[Embed(source = "sounds/damage.mp3")] static public var damage:Class;
+		[Embed(source = "sounds/footstep.mp3")] static public var fs:Class;
+		[Embed(source = "sounds/fall.mp3")] static public var fall:Class
+		[Embed(source = "sounds/jump.mp3")] static public var jump:Class
+		[Embed(source="sounds/dead.mp3")] static public var dead:Class;
 		
 		[Embed(source = "../data/mapCSV_lvl1_Solid.csv", mimeType = "application/octet-stream")] static public var MAP1:Class;
 		[Embed(source = "../data/mapCSV_lvl1_Over.csv", mimeType = "application/octet-stream")] static public var MAP5:Class;

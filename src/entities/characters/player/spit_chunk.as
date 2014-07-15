@@ -11,9 +11,9 @@ package entities.characters.player
 		[Embed(source = "../../../assets/images/spit_chunk.png")] public static var SHEET:Class;
 		public var bloodTRAIL:emitterUNI;
 		
-		public var spit_force = 400;
-		public var in_air_drag = 400;
-		public var floor_drag = 600;
+		public var spit_force:int = 400;
+		public var in_air_drag:int = 400;
+		public var floor_drag:int = 600;
 		public var particle_active:Boolean = false;
 		public var active_timer:Number = 0;
 		public var is_flicker:Boolean = false;
@@ -35,7 +35,6 @@ package entities.characters.player
 		}
 		override public function update():void 
 		{
-			trace(bloodTRAIL.active);
 			this.acceleration.y = 500;
 		
 			bloodTRAIL.at(this);
