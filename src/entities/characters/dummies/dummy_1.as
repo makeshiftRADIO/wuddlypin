@@ -18,6 +18,7 @@ package entities.characters.dummies
 		public var WALK_SPEED:int = 40;
 		public var anim:String = "";
 		protected var damageToPlayer:int = 1;
+		protected var healing:int = 2;
 		
 		/** STATE VARs **/
 		public var anim_STATE:String = "";
@@ -187,6 +188,7 @@ package entities.characters.dummies
 		
 		private function _FILL():void {
 			_nuke.mainPlayer.FULL = true;
+			_nuke.mainPlayer._TO_HEAL = healing;
 			_nuke.mainPlayer.timer = 0;
 			this.kill();
 		}
